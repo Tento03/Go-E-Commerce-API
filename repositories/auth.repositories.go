@@ -7,6 +7,6 @@ import (
 
 func FindByUsername(username string) (*models.Auth, error) {
 	var auth models.Auth
-	err := config.DB.Where("username = ?", username).Error
+	err := config.DB.Where("username = ?", username).First(&auth).Error
 	return &auth, err
 }
