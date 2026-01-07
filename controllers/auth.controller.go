@@ -3,6 +3,7 @@ package controllers
 import (
 	"ecommerce-api/requests"
 	"ecommerce-api/services"
+	"ecommerce-api/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,7 @@ import (
 func Register(c *gin.Context) {
 	var req requests.AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": utils.ValidationError(err)})
 		return
 	}
 
