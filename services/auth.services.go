@@ -28,7 +28,7 @@ func Register(username string, password string) (*models.Auth, error) {
 	user := &models.Auth{
 		UserID:   uuid.NewString(),
 		Username: username,
-		Password: hashed,
+		Password: string(hashed),
 	}
 
 	if err := repositories.CreateUser(user); err != nil {

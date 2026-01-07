@@ -12,7 +12,7 @@ import (
 func Register(c *gin.Context) {
 	var req requests.AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": utils.ValidationError(err)})
+		c.JSON(http.StatusBadRequest, gin.H{"errors": utils.ValidationError(err)})
 		return
 	}
 
