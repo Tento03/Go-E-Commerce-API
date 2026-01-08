@@ -5,6 +5,7 @@ import (
 	"ecommerce-api/services"
 	"ecommerce-api/utils"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,8 +26,28 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{
-		"userId":   user.UserID,
-		"username": user.Username,
-	})
+	c.JSON(http.StatusCreated,
+		gin.H{
+			"message":  "register success",
+			"userId":   user.UserID,
+			"username": user.Username,
+		})
+}
+
+func Login(c *gin.Context) {
+	var req requests.AuthRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": utils.ValidationError(err)})
+		return
+	}
+
+	acccessToken, err := services.Login(req.Username, req.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	secured := os.Getenv("APP_ENV") == "production"
+	c.SetCookie("accessToken", acccessToken, 15*60, "/", "", secured, true)
+	c.JSON(http.StatusOK, gin.H{"message": "login success"})
 }
