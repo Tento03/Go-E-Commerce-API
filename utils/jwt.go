@@ -9,11 +9,19 @@ import (
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
-func GenerateToken(userId string, username string, window time.Duration) (string, error) {
+func GenerateToken(userId string, username string, duration time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId":   userId,
 		"username": username,
-		"exp":      window,
+		"exp":      time.Now().Add(duration).Unix(),
 	})
 	return token.SignedString(jwtSecret)
+}
+
+func GenerateAccessToken(userId string, username string, duration time.Duration) (string, error) {
+	return GenerateToken(userId, username, 15*time.Minute)
+}
+
+func GenerateRefreshToken(userId string, username string, duration time.Duration) (string, error) {
+	return GenerateToken(userId, username, duration)
 }
