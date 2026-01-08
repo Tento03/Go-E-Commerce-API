@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 var ErrUsernameExists = errors.New("username already exist")
@@ -62,29 +61,38 @@ func Login(username string, password string) (string, string, error) {
 		return "", "", err
 	}
 
+	hashRT := utils.HashToken(refreshToken)
+	refresh := &models.Refresh{
+		UserID:    user.UserID,
+		Token:     hashRT,
+		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
+	}
+
+	if err := repositories.SaveRefreshToken(refresh); err != nil {
+		return "", "", err
+	}
+
 	return accessToken, refreshToken, err
 }
 
-func Refresh(userId string, refreshToken string) (string, string, error) {
-	old, err := repositories.FindValidRefreshToken(userId, refreshToken)
+func Refresh(refreshToken string) (string, string, error) {
+	hashRT := utils.HashToken(refreshToken)
+	old, err := repositories.FindValidRefreshToken(hashRT)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			_ = repositories.RevokeAllUser(userId)
-			return "", "", ErrRefreshReuse
-		}
-		return "", "", err
+		return "", "", ErrRefreshReuse
 	}
 
 	if err := repositories.RevokeToken(old); err != nil {
 		return "", "", err
 	}
 
-	newAccessToken, _ := utils.GenerateAccessToken(userId)
-	newRefreshToken, _ := utils.GenerateRefreshToken(userId)
+	newAccessToken, _ := utils.GenerateAccessToken(old.UserID)
+	newRefreshToken, _ := utils.GenerateRefreshToken(old.UserID)
 
+	newHashRT := utils.HashToken(newRefreshToken)
 	refresh := &models.Refresh{
-		UserID:    userId,
-		Token:     newRefreshToken,
+		UserID:    old.UserID,
+		Token:     newHashRT,
 		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
 	}
 

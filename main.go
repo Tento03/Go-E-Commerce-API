@@ -14,7 +14,7 @@ import (
 func main() {
 	config.LoadEnv()
 	config.ConnectDB()
-	config.DB.AutoMigrate(&models.Auth{})
+	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{})
 	r := gin.Default()
 	routes.AuthRoutes(r)
 

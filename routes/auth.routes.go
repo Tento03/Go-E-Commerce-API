@@ -9,9 +9,9 @@ import (
 
 func AuthRoutes(r *gin.Engine) {
 	auth := r.Group("/auth")
-	auth.Use(middleware.RequireAuth)
 	{
 		auth.POST("/register", controllers.Register)
 		auth.POST("/login", controllers.Login)
+		auth.POST("/refresh", middleware.RequireAuth, controllers.Refresh)
 	}
 }
