@@ -10,21 +10,20 @@ import (
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
-func GenerateToken(userId string, username string, duration time.Duration) (string, error) {
+func GenerateToken(userId string, duration time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId":   userId,
-		"username": username,
-		"exp":      time.Now().Add(duration).Unix(),
+		"userId": userId,
+		"exp":    time.Now().Add(duration).Unix(),
 	})
 	return token.SignedString(jwtSecret)
 }
 
-func GenerateAccessToken(userId string, username string) (string, error) {
-	return GenerateToken(userId, username, 15*time.Minute)
+func GenerateAccessToken(userId string) (string, error) {
+	return GenerateToken(userId, 15*time.Minute)
 }
 
-func GenerateRefreshToken(userId string, username string) (string, error) {
-	return GenerateToken(userId, username, 7*24*time.Hour)
+func GenerateRefreshToken(userId string) (string, error) {
+	return GenerateToken(userId, 7*24*time.Hour)
 }
 
 func ParseToken(tokenStr string) (jwt.MapClaims, error) {

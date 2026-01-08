@@ -5,12 +5,15 @@ import (
 	"ecommerce-api/repositories"
 	"ecommerce-api/utils"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 var ErrUsernameExists = errors.New("username already exist")
 var ErrInvalidCredentials = errors.New("invalid credentials")
+var ErrRefreshReuse = errors.New("refresh token expired or reused")
 
 func Register(username string, password string) (*models.Auth, error) {
 	exist, err := repositories.IsUsernameExist(username)
@@ -49,15 +52,45 @@ func Login(username string, password string) (string, string, error) {
 		return "", "", ErrInvalidCredentials
 	}
 
-	accessToken, err := utils.GenerateAccessToken(user.UserID, user.Username)
+	accessToken, err := utils.GenerateAccessToken(user.UserID)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := utils.GenerateRefreshToken(user.UserID, user.Username)
+	refreshToken, err := utils.GenerateRefreshToken(user.UserID)
 	if err != nil {
 		return "", "", err
 	}
 
 	return accessToken, refreshToken, err
+}
+
+func Refresh(userId string, refreshToken string) (string, string, error) {
+	old, err := repositories.FindValidRefreshToken(userId, refreshToken)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			_ = repositories.RevokeAllUser(userId)
+			return "", "", ErrRefreshReuse
+		}
+		return "", "", err
+	}
+
+	if err := repositories.RevokeToken(old); err != nil {
+		return "", "", err
+	}
+
+	newAccessToken, _ := utils.GenerateAccessToken(userId)
+	newRefreshToken, _ := utils.GenerateRefreshToken(userId)
+
+	refresh := models.Refresh{
+		UserID:    userId,
+		Token:     newRefreshToken,
+		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
+	}
+
+	if err := repositories.SaveRefreshToken(&refresh); err != nil {
+		return "", "", err
+	}
+
+	return newAccessToken, newRefreshToken, nil
 }
