@@ -82,13 +82,13 @@ func Refresh(userId string, refreshToken string) (string, string, error) {
 	newAccessToken, _ := utils.GenerateAccessToken(userId)
 	newRefreshToken, _ := utils.GenerateRefreshToken(userId)
 
-	refresh := models.Refresh{
+	refresh := &models.Refresh{
 		UserID:    userId,
 		Token:     newRefreshToken,
 		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
 	}
 
-	if err := repositories.SaveRefreshToken(&refresh); err != nil {
+	if err := repositories.SaveRefreshToken(refresh); err != nil {
 		return "", "", err
 	}
 

@@ -54,3 +54,25 @@ func Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "login success"})
 }
+
+func Refresh(c *gin.Context) {
+	refreshToken, err := c.Cookie("refreshToken")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token not found"})
+		return
+	}
+
+	userId := c.GetString("userId")
+
+	newAccessToken, newRefreshToken, err := services.Refresh(userId, refreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	secured := os.Getenv("APP_ENV") == "production"
+	c.SetCookie("accessToken", newAccessToken, 15*60, "/", "", secured, true)
+	c.SetCookie("refreshToken", newRefreshToken, 7*24*60*60, "/", "", secured, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "token refreshed"})
+}
