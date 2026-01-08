@@ -102,3 +102,14 @@ func Refresh(refreshToken string) (string, string, error) {
 
 	return newAccessToken, newRefreshToken, nil
 }
+
+func Logout(refresh string) error {
+	hashRT := utils.HashToken(refresh)
+
+	old, err := repositories.FindValidRefreshToken(hashRT)
+	if err != nil {
+		return nil
+	}
+
+	return repositories.RevokeToken(old)
+}

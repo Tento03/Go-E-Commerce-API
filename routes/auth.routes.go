@@ -13,5 +13,6 @@ func AuthRoutes(r *gin.Engine) {
 		auth.POST("/register", controllers.Register)
 		auth.POST("/login", controllers.Login)
 		auth.POST("/refresh", middleware.RequireAuth, controllers.Refresh)
+		auth.POST("/logout", controllers.Logout)
 	}
 }

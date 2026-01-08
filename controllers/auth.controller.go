@@ -75,3 +75,19 @@ func Refresh(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "token refreshed"})
 }
+
+func Logout(c *gin.Context) {
+	refreshToken, err := c.Cookie("refreshToken")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token not found"})
+		return
+	}
+
+	_ = services.Logout(refreshToken)
+
+	secured := os.Getenv("APP_ENV") == "production"
+	c.SetCookie("accessToken", "", -1, "/", "", secured, true)
+	c.SetCookie("refreshToken", "", -1, "/", "", secured, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "logout sukses"})
+}
