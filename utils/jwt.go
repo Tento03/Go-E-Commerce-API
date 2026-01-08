@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -24,4 +25,17 @@ func GenerateAccessToken(userId string, username string) (string, error) {
 
 func GenerateRefreshToken(userId string, username string) (string, error) {
 	return GenerateToken(userId, username, 7*24*time.Hour)
+}
+
+func ParseToken(tokenStr string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (any, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return jwtSecret, nil
+	})
+	if !token.Valid || err != nil {
+		return nil, errors.New("invalid token")
+	}
+	return token.Claims.(jwt.MapClaims), nil
 }
