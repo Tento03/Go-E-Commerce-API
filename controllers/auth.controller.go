@@ -41,7 +41,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	acccessToken, refreshToken, err := services.Login(req.Username, req.Password)
+	accessToken, refreshToken, err := services.Login(req.Username, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -49,7 +49,7 @@ func Login(c *gin.Context) {
 
 	secured := os.Getenv("APP_ENV") == "production"
 
-	c.SetCookie("accessToken", acccessToken, 15*60, "/", "", secured, true)
+	c.SetCookie("accessToken", accessToken, 15*60, "/", "", secured, true)
 	c.SetCookie("refreshToken", refreshToken, 7*24*60*60, "/", "", secured, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "login success"})
