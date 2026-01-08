@@ -49,12 +49,12 @@ func Login(username string, password string) (string, string, error) {
 		return "", "", ErrInvalidCredentials
 	}
 
-	accessToken, err := utils.GenerateAccessToken(user.UserID, username)
+	accessToken, err := utils.GenerateAccessToken(user.UserID, user.Username)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := utils.GenerateRefreshToken(user.UserID, username)
+	refreshToken, err := utils.GenerateRefreshToken(user.UserID, user.Username)
 	if err != nil {
 		return "", "", err
 	}
