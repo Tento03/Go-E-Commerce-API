@@ -5,10 +5,8 @@ import (
 	"ecommerce-api/repositories"
 	"ecommerce-api/utils"
 	"errors"
-	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 var ErrUsernameExists = errors.New("username already exist")
@@ -41,17 +39,25 @@ func Register(username string, password string) (*models.Auth, error) {
 	return user, nil
 }
 
-func Login(username string, password string) (string, error) {
+func Login(username string, password string) (string, string, error) {
 	user, err := repositories.FindByUsername(username)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return "", ErrInvalidCredentials
-		}
+		return "", "", err
 	}
 
 	if !utils.ComparePassword(user.Password, password) {
-		return "", ErrInvalidCredentials
+		return "", "", ErrInvalidCredentials
 	}
 
-	return utils.GenerateToken(user.UserID, user.Username, 15*time.Minute)
+	accessToken, err := utils.GenerateAccessToken(user.UserID, username)
+	if err != nil {
+		return "", "", err
+	}
+
+	refreshToken, err := utils.GenerateRefreshToken(user.UserID, username)
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessToken, refreshToken, err
 }

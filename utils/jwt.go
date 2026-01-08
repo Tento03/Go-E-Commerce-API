@@ -18,10 +18,10 @@ func GenerateToken(userId string, username string, duration time.Duration) (stri
 	return token.SignedString(jwtSecret)
 }
 
-func GenerateAccessToken(userId string, username string, duration time.Duration) (string, error) {
+func GenerateAccessToken(userId string, username string) (string, error) {
 	return GenerateToken(userId, username, 15*time.Minute)
 }
 
-func GenerateRefreshToken(userId string, username string, duration time.Duration) (string, error) {
-	return GenerateToken(userId, username, duration)
+func GenerateRefreshToken(userId string, username string) (string, error) {
+	return GenerateToken(userId, username, 7*24*time.Hour)
 }
