@@ -74,3 +74,42 @@ func Login(username string, password string) (string, string, error) {
 
 	return accessToken, refreshToken, nil
 }
+
+func Refresh(refreshToken string) (string, string, error) {
+	hashRT := utils.HashToken(refreshToken)
+	old, err := repositories.FindValidRefreshToken(hashRT)
+	if err != nil {
+		return "", "", ErrRefreshReuse
+	}
+
+	if err := repositories.RevokeToken(old); err != nil {
+		return "", "", err
+	}
+
+	newAccessToken, _ := utils.GenerateAccessToken(old.UserID)
+	newRefreshToken, _ := utils.GenerateRefreshToken(old.UserID)
+
+	newHashRT := utils.HashToken(newRefreshToken)
+	refresh := &models.Refresh{
+		UserID:    old.UserID,
+		Token:     newHashRT,
+		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
+	}
+
+	if err := repositories.SaveRefreshToken(refresh); err != nil {
+		return "", "", err
+	}
+
+	return newAccessToken, newRefreshToken, nil
+}
+
+func Logout(refresh string) error {
+	hashRT := utils.HashToken(refresh)
+
+	old, err := repositories.FindValidRefreshToken(hashRT)
+	if err != nil {
+		return nil
+	}
+
+	return repositories.RevokeToken(old)
+}
