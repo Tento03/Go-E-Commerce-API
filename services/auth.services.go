@@ -108,7 +108,7 @@ func Logout(refresh string) error {
 
 	old, err := repositories.FindValidRefreshToken(hashRT)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return repositories.RevokeToken(old)
