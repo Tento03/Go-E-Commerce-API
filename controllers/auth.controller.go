@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"ecommerce-api/requests"
+	requests "ecommerce-api/requests/auth"
 	"ecommerce-api/services"
 	"ecommerce-api/utils"
 	"net/http"
