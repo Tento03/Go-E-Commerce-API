@@ -69,7 +69,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	ext := strings.ToLower(filepath.Base(file.Filename))
+	ext := strings.ToLower(filepath.Ext(file.Filename))
 	allowedType := map[string][]string{
 		"jpg": {".jpg", ".jpeg"},
 		"png": {".png"},
@@ -94,7 +94,7 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := services.CreateProduct(productId, req.Title, req.Description, req.Price, req.Type, req.Path)
+	product, err := services.CreateProduct(productId, req.Title, req.Description, req.Price, req.Type, path)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create product"})
 		return
@@ -104,11 +104,6 @@ func CreateProduct(c *gin.Context) {
 
 func UpdateProduct(c *gin.Context) {
 	productId := c.Param("id")
-	product, err := services.GetById(productId)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
-		return
-	}
 
 	var req requests.UpdateProductRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -123,7 +118,7 @@ func UpdateProduct(c *gin.Context) {
 			return
 		}
 
-		ext := strings.ToLower(filepath.Base(file.Filename))
+		ext := strings.ToLower(filepath.Ext(file.Filename))
 		allowedType := map[string][]string{
 			"jpg": {".jpg", ".jpeg"},
 			"png": {".png"},
@@ -134,7 +129,6 @@ func UpdateProduct(c *gin.Context) {
 			return
 		}
 
-		productId := product.ProductID
 		filename := fmt.Sprintf(
 			"%s_%d%s",
 			productId,
