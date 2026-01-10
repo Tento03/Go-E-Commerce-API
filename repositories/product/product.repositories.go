@@ -2,7 +2,7 @@ package product
 
 import (
 	"ecommerce-api/config"
-	"ecommerce-api/models"
+	models "ecommerce-api/models/product"
 )
 
 func FindAll() (*[]models.Product, error) {
@@ -11,9 +11,9 @@ func FindAll() (*[]models.Product, error) {
 	return &product, err
 }
 
-func FindById(userId string) (*models.Product, error) {
+func FindById(productId string) (*models.Product, error) {
 	var product models.Product
-	err := config.DB.Model(&models.Product{}).Where("user_id = ?", userId).Error
+	err := config.DB.Model(&models.Product{}).Where("product_id = ?", productId).Error
 	return &product, err
 }
 
@@ -28,11 +28,11 @@ func CreateProduct(product *models.Product) error {
 }
 
 func UpdateProduct(input *models.Product, product *models.Product) error {
-	err := config.DB.Model(input).Updates(&product).Error
+	err := config.DB.Model(input).Save(&product).Error
 	return err
 }
 
-func DeleteProduct(input *models.Product, userId string) error {
-	err := config.DB.Delete(input, userId).Error
+func DeleteProduct(input *models.Product, productId string) error {
+	err := config.DB.Delete(input, productId).Error
 	return err
 }

@@ -1,11 +1,9 @@
 package product
 
 import (
-	"ecommerce-api/models"
+	models "ecommerce-api/models/product"
 	repositories "ecommerce-api/repositories/product"
 	"errors"
-
-	"github.com/google/uuid"
 )
 
 var ErrNotFound = errors.New("product not found")
@@ -26,20 +24,21 @@ func GetByTitle(title string) (*[]models.Product, error) {
 	return product, nil
 }
 
-func GetById(userId string) (*models.Product, error) {
-	product, err := repositories.FindById(userId)
+func GetById(productId string) (*models.Product, error) {
+	product, err := repositories.FindById(productId)
 	if err != nil {
 		return nil, ErrNotFound
 	}
 	return product, nil
 }
 
-func CreateProduct(title string, description string, price string, path string) (*models.Product, error) {
+func CreateProduct(productId, title string, description string, price string, types string, path string) (*models.Product, error) {
 	products := &models.Product{
-		UserID:      uuid.NewString(),
+		ProductID:   productId,
 		Title:       title,
 		Description: description,
 		Price:       price,
+		Type:        types,
 		Path:        path,
 	}
 
@@ -47,8 +46,8 @@ func CreateProduct(title string, description string, price string, path string) 
 	return products, nil
 }
 
-func UpdateProduct(userId string, title string, description string, price string, path string) (*models.Product, error) {
-	input, err := repositories.FindById(userId)
+func UpdateProduct(productId string, title string, description string, price string, types string, path string) (*models.Product, error) {
+	input, err := repositories.FindById(productId)
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -57,6 +56,7 @@ func UpdateProduct(userId string, title string, description string, price string
 		Title:       title,
 		Description: description,
 		Price:       price,
+		Type:        types,
 		Path:        path,
 	}
 
@@ -64,12 +64,12 @@ func UpdateProduct(userId string, title string, description string, price string
 	return product, nil
 }
 
-func DeleteProduct(userId string) error {
-	product, err := repositories.FindById(userId)
+func DeleteProduct(productId string) error {
+	product, err := repositories.FindById(productId)
 	if err != nil {
 		return ErrNotFound
 	}
 
-	_ = repositories.DeleteProduct(product, userId)
+	_ = repositories.DeleteProduct(product, productId)
 	return nil
 }
