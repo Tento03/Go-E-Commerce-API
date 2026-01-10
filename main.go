@@ -2,7 +2,8 @@ package main
 
 import (
 	"ecommerce-api/config"
-	"ecommerce-api/models"
+	models "ecommerce-api/models/auth"
+
 	"ecommerce-api/routes"
 	"ecommerce-api/validators"
 

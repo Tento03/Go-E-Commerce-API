@@ -1,7 +1,7 @@
 package services
 
 import (
-	"ecommerce-api/models"
+	models "ecommerce-api/models/auth"
 	"ecommerce-api/repositories"
 	"ecommerce-api/utils"
 	"errors"

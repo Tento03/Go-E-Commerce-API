@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"ecommerce-api/config"
-	"ecommerce-api/models"
+	models "ecommerce-api/models/auth"
 	"time"
 )
 
