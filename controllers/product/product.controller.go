@@ -35,7 +35,7 @@ func FindById(c *gin.Context) {
 }
 
 func FindByTitle(c *gin.Context) {
-	userId := c.Param("id")
+	userId := c.Param("title")
 	product, err := repositories.FindById(userId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})

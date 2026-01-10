@@ -19,6 +19,7 @@ func main() {
 	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{}, &models2.Product{})
 	r := gin.Default()
 	routes.AuthRoutes(r)
+	routes.ProductRoutes(r)
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("password", validators.PasswordValidator)

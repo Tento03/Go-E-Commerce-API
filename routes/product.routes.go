@@ -12,7 +12,7 @@ func ProductRoutes(r *gin.Engine) {
 	product.Use(middleware.RequireAuth)
 	{
 		product.GET("/", controllers.FindAll)
-		product.GET("/:id", controllers.FindByTitle)
+		product.GET("title/:title", controllers.FindByTitle)
 		product.GET("/:id", controllers.FindById)
 		product.POST("/", controllers.CreateProduct)
 		product.PUT("/:id", controllers.UpdateProduct)
