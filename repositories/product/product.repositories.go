@@ -21,8 +21,8 @@ func CreateProduct(product *models.Product) error {
 	return config.DB.Create(product).Error
 }
 
-func UpdateProduct(input *models.Product, product *models.Product) error {
-	err := config.DB.Model(input).Updates(&product).Error
+func UpdateProduct(product *models.Product) error {
+	err := config.DB.Save(product).Error
 	return err
 }
 

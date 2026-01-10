@@ -39,20 +39,21 @@ func CreateProduct(productId, title string, description string, price string, ty
 }
 
 func UpdateProduct(productId string, title string, description string, price string, types string, path string) (*models.Product, error) {
-	input, err := repositories.FindById(productId)
+	product, err := repositories.FindById(productId)
 	if err != nil {
 		return nil, ErrNotFound
 	}
 
-	product := &models.Product{
-		Title:       title,
-		Description: description,
-		Price:       price,
-		Type:        types,
-		Path:        path,
+	product.Title = title
+	product.Description = description
+	product.Price = price
+	product.Type = types
+	product.Path = path
+
+	if err := repositories.UpdateProduct(product); err != nil {
+		return nil, err
 	}
 
-	_ = repositories.UpdateProduct(input, product)
 	return product, nil
 }
 
