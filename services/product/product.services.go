@@ -16,14 +16,6 @@ func GetAllProducts() (*[]models.Product, error) {
 	return product, nil
 }
 
-func GetByTitle(title string) (*[]models.Product, error) {
-	product, err := repositories.FindByTitle(title)
-	if err != nil {
-		return nil, err
-	}
-	return product, nil
-}
-
 func GetById(productId string) (*models.Product, error) {
 	product, err := repositories.FindById(productId)
 	if err != nil {
@@ -65,11 +57,11 @@ func UpdateProduct(productId string, title string, description string, price str
 }
 
 func DeleteProduct(productId string) error {
-	product, err := repositories.FindById(productId)
+	_, err := repositories.FindById(productId)
 	if err != nil {
 		return ErrNotFound
 	}
 
-	_ = repositories.DeleteProduct(product, productId)
+	_ = repositories.DeleteProduct(productId)
 	return nil
 }

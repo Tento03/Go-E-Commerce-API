@@ -34,23 +34,6 @@ func FindById(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": product})
 }
 
-func FindByTitle(c *gin.Context) {
-	userId := c.Param("title")
-	product, err := repositories.FindById(userId)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
-		return
-	}
-
-	title := product.Title
-	productTitle, err := repositories.FindByTitle(title)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "success", "data": productTitle})
-}
-
 func CreateProduct(c *gin.Context) {
 	var req requests.CreateProductRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -142,14 +125,19 @@ func UpdateProduct(c *gin.Context) {
 			return
 		}
 
-		products, err := services.UpdateProduct(productId, req.Title, req.Description, req.Price, req.Type, path)
+		_, err := services.UpdateProduct(productId, req.Title, req.Description, req.Price, req.Type, path)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update product"})
 			return
 		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "success update data", "data": products})
 	}
+
+	product, err := repositories.FindById(productId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "update success", "data": product})
 }
 
 func DeleteProduct(c *gin.Context) {

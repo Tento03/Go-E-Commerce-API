@@ -13,13 +13,7 @@ func FindAll() (*[]models.Product, error) {
 
 func FindById(productId string) (*models.Product, error) {
 	var product models.Product
-	err := config.DB.Model(&models.Product{}).Where("product_id = ?", productId).Error
-	return &product, err
-}
-
-func FindByTitle(title string) (*[]models.Product, error) {
-	var product []models.Product
-	err := config.DB.Model(&models.Product{}).Where("title = ?", title).First(&product).Error
+	err := config.DB.Model(&models.Product{}).Where("product_id = ?", productId).First(&product).Error
 	return &product, err
 }
 
@@ -32,7 +26,7 @@ func UpdateProduct(input *models.Product, product *models.Product) error {
 	return err
 }
 
-func DeleteProduct(input *models.Product, productId string) error {
-	err := config.DB.Delete(input, productId).Error
+func DeleteProduct(productId string) error {
+	err := config.DB.Where("product_id = ?", productId).Delete(&models.Product{}).Error
 	return err
 }
