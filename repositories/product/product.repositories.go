@@ -27,9 +27,8 @@ func CreateProduct(product *models.Product) error {
 	return config.DB.Create(product).Error
 }
 
-func UpdateProduct(userId string, input *models.Product) error {
-	var product models.Product
-	err := config.DB.Model(input).Where("user_id = ?", userId).Updates(&product).Error
+func UpdateProduct(input *models.Product, product *models.Product) error {
+	err := config.DB.Model(input).Updates(&product).Error
 	return err
 }
 
