@@ -11,7 +11,7 @@ var ErrNotFound = errors.New("product not found")
 func GetAllProducts() (*[]models.Product, error) {
 	product, err := repositories.FindAll()
 	if err != nil {
-		return nil, err
+		return nil, ErrNotFound
 	}
 	return product, nil
 }
@@ -24,8 +24,8 @@ func GetById(productId string) (*models.Product, error) {
 	return product, nil
 }
 
-func CreateProduct(productId, title string, description string, price string, types string, path string) (*models.Product, error) {
-	products := &models.Product{
+func CreateProduct(productId string, title string, description string, price string, types string, path string) (*models.Product, error) {
+	product := &models.Product{
 		ProductID:   productId,
 		Title:       title,
 		Description: description,
@@ -33,9 +33,11 @@ func CreateProduct(productId, title string, description string, price string, ty
 		Type:        types,
 		Path:        path,
 	}
-
-	_ = repositories.CreateProduct(products)
-	return products, nil
+	err := repositories.CreateProduct(product)
+	if err != nil {
+		return nil, err
+	}
+	return product, nil
 }
 
 func UpdateProduct(productId string, title string, description string, price string, types string, path string) (*models.Product, error) {
