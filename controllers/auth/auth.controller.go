@@ -1,4 +1,4 @@
-package controllers
+package auth
 
 import (
 	requests "ecommerce-api/requests/auth"
