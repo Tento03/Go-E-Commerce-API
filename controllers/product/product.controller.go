@@ -1,7 +1,6 @@
 package product
 
 import (
-	repositories "ecommerce-api/repositories/product"
 	requests "ecommerce-api/requests/product"
 	services "ecommerce-api/services/product"
 	"fmt"
@@ -15,8 +14,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func FindAll(c *gin.Context) {
-	product, err := repositories.FindAll()
+func GetAll(c *gin.Context) {
+	product, err := services.GetAllProducts()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 		return
@@ -24,9 +23,9 @@ func FindAll(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": product})
 }
 
-func FindById(c *gin.Context) {
-	userId := c.Param("id")
-	product, err := repositories.FindById(userId)
+func GetById(c *gin.Context) {
+	productId := c.Param("id")
+	product, err := services.GetById(productId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 		return
@@ -132,12 +131,12 @@ func UpdateProduct(c *gin.Context) {
 		}
 	}
 
-	product, err := repositories.FindById(productId)
+	product, err := services.GetById(productId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "update success", "data": product})
+	c.JSON(http.StatusOK, gin.H{"message": "data updated", "data": product})
 }
 
 func DeleteProduct(c *gin.Context) {
