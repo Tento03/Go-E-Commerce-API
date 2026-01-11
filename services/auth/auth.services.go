@@ -3,7 +3,6 @@ package services
 import (
 	models "ecommerce-api/models/auth"
 	repositories "ecommerce-api/repositories/auth"
-
 	"ecommerce-api/utils"
 	"errors"
 	"time"
@@ -104,9 +103,8 @@ func Refresh(refreshToken string) (string, string, error) {
 	return newAccessToken, newRefreshToken, nil
 }
 
-func Logout(refresh string) error {
-	hashRT := utils.HashToken(refresh)
-
+func Logout(refreshToken string) error {
+	hashRT := utils.HashToken(refreshToken)
 	old, err := repositories.FindValidRefreshToken(hashRT)
 	if err != nil {
 		return err
