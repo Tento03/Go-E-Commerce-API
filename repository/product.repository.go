@@ -1,8 +1,8 @@
-package product
+package repository
 
 import (
 	"ecommerce-api/config"
-	models "ecommerce-api/models/product"
+	"ecommerce-api/models"
 )
 
 func FindAll() (*[]models.Product, error) {

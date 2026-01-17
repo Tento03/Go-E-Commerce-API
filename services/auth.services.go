@@ -1,8 +1,8 @@
 package services
 
 import (
-	models "ecommerce-api/models/auth"
-	repositories "ecommerce-api/repositories/auth"
+	"ecommerce-api/models"
+	"ecommerce-api/repository"
 	"ecommerce-api/utils"
 	"errors"
 	"time"
@@ -15,7 +15,7 @@ var ErrInvalidCredentials = errors.New("invalid credentials")
 var ErrRefreshReuse = errors.New("refresh token expired or reused")
 
 func Register(username string, password string) (*models.Auth, error) {
-	exist, err := repositories.IsUsernameExist(username)
+	exist, err := repository.IsUsernameExist(username)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func Register(username string, password string) (*models.Auth, error) {
 		Password: string(hashed),
 	}
 
-	if err := repositories.CreateUser(user); err != nil {
+	if err := repository.CreateUser(user); err != nil {
 		return nil, err
 	}
 
@@ -42,7 +42,7 @@ func Register(username string, password string) (*models.Auth, error) {
 }
 
 func Login(username string, password string) (string, string, error) {
-	user, err := repositories.FindByUsername(username)
+	user, err := repository.FindByUsername(username)
 	if err != nil {
 		return "", "", err
 	}
@@ -68,7 +68,7 @@ func Login(username string, password string) (string, string, error) {
 		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
 	}
 
-	if err := repositories.SaveRefreshToken(refresh); err != nil {
+	if err := repository.SaveRefreshToken(refresh); err != nil {
 		return "", "", err
 	}
 
@@ -77,12 +77,12 @@ func Login(username string, password string) (string, string, error) {
 
 func Refresh(refreshToken string) (string, string, error) {
 	hashRT := utils.HashToken(refreshToken)
-	old, err := repositories.FindValidRefreshToken(hashRT)
+	old, err := repository.FindValidRefreshToken(hashRT)
 	if err != nil {
 		return "", "", ErrRefreshReuse
 	}
 
-	if err := repositories.RevokeToken(old); err != nil {
+	if err := repository.RevokeToken(old); err != nil {
 		return "", "", err
 	}
 
@@ -96,7 +96,7 @@ func Refresh(refreshToken string) (string, string, error) {
 		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
 	}
 
-	if err := repositories.SaveRefreshToken(refresh); err != nil {
+	if err := repository.SaveRefreshToken(refresh); err != nil {
 		return "", "", err
 	}
 
@@ -105,10 +105,10 @@ func Refresh(refreshToken string) (string, string, error) {
 
 func Logout(refreshToken string) error {
 	hashRT := utils.HashToken(refreshToken)
-	old, err := repositories.FindValidRefreshToken(hashRT)
+	old, err := repository.FindValidRefreshToken(hashRT)
 	if err != nil {
 		return err
 	}
 
-	return repositories.RevokeToken(old)
+	return repository.RevokeToken(old)
 }

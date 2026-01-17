@@ -1,8 +1,8 @@
-package repositories
+package repository
 
 import (
 	"ecommerce-api/config"
-	models "ecommerce-api/models/auth"
+	"ecommerce-api/models"
 )
 
 func CreateUser(user *models.Auth) error {

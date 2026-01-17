@@ -1,15 +1,15 @@
-package product
+package services
 
 import (
-	models "ecommerce-api/models/product"
-	repositories "ecommerce-api/repositories/product"
+	"ecommerce-api/models"
+	"ecommerce-api/repository"
 	"errors"
 )
 
 var ErrNotFound = errors.New("product not found")
 
 func GetAllProducts() (*[]models.Product, error) {
-	product, err := repositories.FindAll()
+	product, err := repository.FindAll()
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -17,7 +17,7 @@ func GetAllProducts() (*[]models.Product, error) {
 }
 
 func GetById(productId string) (*models.Product, error) {
-	product, err := repositories.FindById(productId)
+	product, err := repository.FindById(productId)
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -33,7 +33,7 @@ func CreateProduct(productId string, title string, description string, price str
 		Type:        types,
 		Path:        path,
 	}
-	err := repositories.CreateProduct(product)
+	err := repository.CreateProduct(product)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func CreateProduct(productId string, title string, description string, price str
 }
 
 func UpdateProduct(productId string, title string, description string, price string, types string, path string) (*models.Product, error) {
-	product, err := repositories.FindById(productId)
+	product, err := repository.FindById(productId)
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -52,7 +52,7 @@ func UpdateProduct(productId string, title string, description string, price str
 	product.Type = types
 	product.Path = path
 
-	if err := repositories.UpdateProduct(product); err != nil {
+	if err := repository.UpdateProduct(product); err != nil {
 		return nil, err
 	}
 
@@ -60,11 +60,11 @@ func UpdateProduct(productId string, title string, description string, price str
 }
 
 func DeleteProduct(productId string) error {
-	_, err := repositories.FindById(productId)
+	_, err := repository.FindById(productId)
 	if err != nil {
 		return ErrNotFound
 	}
 
-	_ = repositories.DeleteProduct(productId)
+	_ = repository.DeleteProduct(productId)
 	return nil
 }

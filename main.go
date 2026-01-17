@@ -2,8 +2,7 @@ package main
 
 import (
 	"ecommerce-api/config"
-	models "ecommerce-api/models/auth"
-	models2 "ecommerce-api/models/product"
+	"ecommerce-api/models"
 
 	"ecommerce-api/routes"
 	"ecommerce-api/validators"
@@ -16,7 +15,7 @@ import (
 func main() {
 	config.LoadEnv()
 	config.ConnectDB()
-	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{}, &models2.Product{})
+	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{}, &models.Product{})
 	r := gin.Default()
 	routes.AuthRoutes(r)
 	routes.ProductRoutes(r)

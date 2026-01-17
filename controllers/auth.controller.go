@@ -1,8 +1,8 @@
-package auth
+package controllers
 
 import (
 	requests "ecommerce-api/requests/auth"
-	services "ecommerce-api/services/auth"
+	"ecommerce-api/services"
 	"ecommerce-api/utils"
 	"net/http"
 	"os"

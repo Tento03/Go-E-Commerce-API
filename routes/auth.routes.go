@@ -1,7 +1,7 @@
 package routes
 
 import (
-	controllers "ecommerce-api/controllers/auth"
+	"ecommerce-api/controllers"
 	"ecommerce-api/middleware"
 
 	"github.com/gin-gonic/gin"
