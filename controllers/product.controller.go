@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	requests "ecommerce-api/requests/product"
+	"ecommerce-api/requests"
 	"ecommerce-api/services"
 	"fmt"
 	"net/http"

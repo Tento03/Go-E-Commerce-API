@@ -1,4 +1,4 @@
-package product
+package requests
 
 type CreateProductRequest struct {
 	Title       string `form:"title" binding:"required,min=5"`
