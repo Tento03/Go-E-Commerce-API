@@ -19,7 +19,7 @@ func ConnectRedis() {
 		Protocol: 2,
 	})
 
-	if err := Client.Ping(Ctx); err != nil {
+	if err := Client.Ping(Ctx).Err(); err != nil {
 		log.Fatal("Redis connection failed:", err)
 	}
 

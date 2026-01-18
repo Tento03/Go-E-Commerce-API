@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"ecommerce-api/infra"
 	"ecommerce-api/requests"
 	"ecommerce-api/services"
 	"ecommerce-api/utils"
@@ -46,6 +47,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	_ = infra.ResetLogin(c.ClientIP())
+
 	secured := os.Getenv("APP_ENV") == "production"
 
 	c.SetCookie("accessToken", accessToken, 15*60, "/", "", secured, true)
@@ -66,6 +69,8 @@ func Refresh(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
+
+	_ = infra.ResetRefreshToken(c.ClientIP(), utils.HashToken(refreshToken))
 
 	secured := os.Getenv("APP_ENV") == "production"
 

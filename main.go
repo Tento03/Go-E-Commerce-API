@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	config.ConnectRedis()
 	config.LoadEnv()
 	config.ConnectDB()
 	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{}, &models.Product{})
