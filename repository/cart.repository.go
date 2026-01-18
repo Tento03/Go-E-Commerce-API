@@ -14,3 +14,7 @@ func GetCart() (*models.Cart, error) {
 func CreateCart(cart *models.Cart) error {
 	return config.DB.Create(cart).Error
 }
+
+func UpdateCart(cart *models.Cart) error {
+	return config.DB.Save(cart).Error
+}
