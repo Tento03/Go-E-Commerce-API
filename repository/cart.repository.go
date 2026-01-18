@@ -18,3 +18,7 @@ func CreateCart(cart *models.Cart) error {
 func UpdateCart(cart *models.Cart) error {
 	return config.DB.Save(cart).Error
 }
+
+func DeleteCart(userId string) error {
+	return config.DB.Where("user_id = ?", userId).Delete(&models.Cart{}).Error
+}
