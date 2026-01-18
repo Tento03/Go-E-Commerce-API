@@ -1,11 +1,17 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 type Cart struct {
 	gorm.Model
-	CardID   string    `gorm:"not null"`
-	Products []Product `gorm:"many2many:cart_products"`
+	UserID string `gorm:"not null;uniqueIndex"`
+	Items  []CartItem
+}
+
+type CartItem struct {
+	gorm.Model
+	CartID    string
+	ProductID string
+	Qty       string `gorm:"not null"`
+	Product   Product
 }
