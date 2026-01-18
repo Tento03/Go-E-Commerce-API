@@ -10,3 +10,7 @@ func GetCart() (*models.Cart, error) {
 	err := config.DB.Find(&cart).Error
 	return &cart, err
 }
+
+func CreateCart(cart *models.Cart) error {
+	return config.DB.Create(cart).Error
+}
