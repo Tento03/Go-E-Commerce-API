@@ -22,11 +22,9 @@ func CreateProduct(product *models.Product) error {
 }
 
 func UpdateProduct(product *models.Product) error {
-	err := config.DB.Save(product).Error
-	return err
+	return config.DB.Save(product).Error
 }
 
 func DeleteProduct(productId string) error {
-	err := config.DB.Where("product_id = ?", productId).Delete(&models.Product{}).Error
-	return err
+	return config.DB.Where("product_id = ?", productId).Delete(&models.Product{}).Error
 }
