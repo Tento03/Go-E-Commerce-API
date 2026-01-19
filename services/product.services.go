@@ -1,18 +1,49 @@
 package services
 
 import (
+	"ecommerce-api/cache"
+	"ecommerce-api/config"
 	"ecommerce-api/models"
 	"ecommerce-api/repository"
+	"ecommerce-api/requests"
 	"errors"
+	"fmt"
+	"log"
+	"time"
 )
 
 var ErrNotFound = errors.New("product not found")
 
 func GetAllProducts() (*[]models.Product, error) {
+	var req requests.GetAllProducts
+
+	if req.Page < 1 {
+		req.Page = 1
+	}
+	if req.Limit < 1 {
+		req.Limit = 10
+	}
+
+	cacheKey := fmt.Sprintf(
+		"products:page=%d:limit=%d",
+		req.Page,
+		req.Limit,
+	)
+
+	products, err := cache.GetList(config.Ctx, cacheKey)
+	if err == nil && len(*products) > 0 {
+		log.Println("GET ALL -> CACHE HIT:", cacheKey)
+		return products, nil
+	}
+
+	log.Println("GET ALL -> CACHE MISS:", cacheKey)
+
 	product, err := repository.FindAll()
 	if err != nil {
 		return nil, ErrNotFound
 	}
+
+	_ = cache.SetList(config.Ctx, cacheKey, product, 5*time.Minute)
 	return product, nil
 }
 
@@ -55,6 +86,8 @@ func UpdateProduct(productId string, title string, description string, price str
 	if err := repository.UpdateProduct(product); err != nil {
 		return nil, err
 	}
+
+	_ = cache.Delete(config.Ctx, product.ProductID)
 
 	return product, nil
 }
