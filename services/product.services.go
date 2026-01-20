@@ -48,10 +48,22 @@ func GetAllProducts() (*[]models.Product, error) {
 }
 
 func GetById(productId string) (*models.Product, error) {
+	cacheKey := fmt.Sprintf("product:id=%s", productId)
+
+	productCache, err := cache.GetById(config.Ctx, cacheKey)
+	if err == nil && productCache != nil {
+		log.Println("GET BY ID -> CACHE HIT:", productId)
+		return productCache, nil
+	}
+
+	log.Println("GET BY ID -> CACHE MISS:", productId)
+
 	product, err := repository.FindById(productId)
 	if err != nil {
 		return nil, ErrNotFound
 	}
+
+	_ = cache.SetById(config.Ctx, cacheKey, product, 5*time.Minute)
 	return product, nil
 }
 
