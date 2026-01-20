@@ -14,12 +14,12 @@ func GetList(ctx context.Context, key string) (*[]models.Product, error) {
 		return nil, err
 	}
 
-	var products *[]models.Product
+	var products []models.Product
 	if err := json.Unmarshal([]byte(val), &products); err != nil {
 		return nil, err
 	}
 
-	return products, nil
+	return &products, nil
 }
 
 func SetList(ctx context.Context, key string, products *[]models.Product, ttl time.Duration) error {
