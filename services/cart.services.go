@@ -46,3 +46,11 @@ func UpdateCart(userId string, item *models.CartItem, cartId string, productId s
 
 	return cart, nil
 }
+
+func DeleteCart(userId string) error {
+	_, err := repository.GetCartById(userId)
+	if err != nil {
+		return err
+	}
+	return repository.DeleteCart(userId)
+}
