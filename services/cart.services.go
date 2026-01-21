@@ -38,7 +38,7 @@ func UpdateCart(userId string, item *models.CartItem, cartId string, productId s
 
 	cart.Items.ProductID = productId
 	cart.Items.Qty = qty
-	cart.Items.Product = *product
+	cart.Items.Product = product
 
 	if err := repository.UpdateCart(cart); err != nil {
 		return nil, err
