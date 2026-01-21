@@ -54,3 +54,12 @@ func DeleteCart(userId string) error {
 	}
 	return repository.DeleteCart(userId)
 }
+
+func DeleteCartItem(cartId string, productId string) error {
+	_, err := repository.GetCartItem(cartId, productId)
+	if err != nil {
+		return err
+	}
+
+	return repository.DeleteCartItem(productId)
+}

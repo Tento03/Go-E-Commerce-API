@@ -17,6 +17,12 @@ func GetCartById(userId string) (*models.Cart, error) {
 	return &cart, err
 }
 
+func GetCartItem(cartId string, productId string) (*models.CartItem, error) {
+	var cartItem models.CartItem
+	err := config.DB.Model(&models.CartItem{}).Where("cart_id =? AND product_id =?", cartId, productId).Error
+	return &cartItem, err
+}
+
 func CreateCart(cart *models.Cart) error {
 	return config.DB.Create(cart).Error
 }
@@ -27,4 +33,8 @@ func UpdateCart(cart *models.Cart) error {
 
 func DeleteCart(userId string) error {
 	return config.DB.Where("user_id = ?", userId).Delete(&models.Cart{}).Error
+}
+
+func DeleteCartItem(productId string) error {
+	return config.DB.Where("product_id = ?", productId).Delete(models.CartItem{}).Error
 }
