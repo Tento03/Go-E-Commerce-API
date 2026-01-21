@@ -11,6 +11,12 @@ func GetCart() (*models.Cart, error) {
 	return &cart, err
 }
 
+func GetCartById(userId string) (*models.Cart, error) {
+	var cart models.Cart
+	err := config.DB.Model(&models.Cart{}).Where("user_id = ?", userId).First(&cart).Error
+	return &cart, err
+}
+
 func CreateCart(cart *models.Cart) error {
 	return config.DB.Create(cart).Error
 }
