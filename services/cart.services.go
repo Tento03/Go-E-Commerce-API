@@ -13,7 +13,22 @@ func GetCart() (*models.Cart, error) {
 	if err != nil {
 		return nil, ErrCartNotFound
 	}
+	return cart, nil
+}
 
+func GetCartById(userId string) (*models.Cart, error) {
+	cart, err := repository.GetCartById(userId)
+	if err != nil {
+		return nil, ErrCartNotFound
+	}
+	return cart, nil
+}
+
+func GetCartItem(cartId string, productId string) (*models.CartItem, error) {
+	cart, err := repository.GetCartItem(cartId, productId)
+	if err != nil {
+		return nil, err
+	}
 	return cart, nil
 }
 
