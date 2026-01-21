@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Cart struct {
 	gorm.Model
 	UserID string `gorm:"not null"`
-	Items  []CartItem
+	Items  *[]CartItem
 }
 
 type CartItem struct {

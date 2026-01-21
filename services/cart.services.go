@@ -16,3 +16,16 @@ func GetCart() (*models.Cart, error) {
 
 	return cart, nil
 }
+
+func CreateCart(userId string, cartId string, item *[]models.CartItem) (*models.Cart, error) {
+	cart := &models.Cart{
+		UserID: userId,
+		Items:  item,
+	}
+
+	if err := repository.CreateCart(cart); err != nil {
+		return nil, err
+	}
+
+	return cart, nil
+}
