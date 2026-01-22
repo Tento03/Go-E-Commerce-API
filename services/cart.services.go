@@ -32,10 +32,16 @@ func GetCartItem(cartId string, productId string) (*models.CartItem, error) {
 	return cart, nil
 }
 
-func CreateCart(userId string, cartId string, item *models.CartItem) (*models.Cart, error) {
+func CreateCart(userId string, cartId string, productId string, qty int) (*models.Cart, error) {
+	items := &models.CartItem{
+		CartID:    cartId,
+		ProductID: productId,
+		Qty:       qty,
+	}
+
 	cart := &models.Cart{
 		UserID: userId,
-		Items:  item,
+		Items:  items,
 	}
 
 	if err := repository.CreateCart(cart); err != nil {
@@ -45,15 +51,13 @@ func CreateCart(userId string, cartId string, item *models.CartItem) (*models.Ca
 	return cart, nil
 }
 
-func UpdateCart(userId string, item *models.CartItem, cartId string, productId string, qty int, product *models.Product) (*models.Cart, error) {
+func UpdateCart(userId string, qty int) (*models.Cart, error) {
 	cart, err := repository.GetCartById(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	cart.Items.ProductID = productId
 	cart.Items.Qty = qty
-	cart.Items.Product = product
 
 	if err := repository.UpdateCart(cart); err != nil {
 		return nil, err

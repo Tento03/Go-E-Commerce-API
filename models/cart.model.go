@@ -13,5 +13,4 @@ type CartItem struct {
 	CartID    string
 	ProductID string
 	Qty       int `gorm:"not null"`
-	Product   *Product
 }

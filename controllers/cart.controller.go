@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func GetCart(c *gin.Context) {
@@ -42,4 +43,73 @@ func GetCartItem(c *gin.Context) {
 		"ProductId": cart.Items.ProductID,
 		"Quantity":  cart.Items.Qty,
 	}})
+}
+
+func CreateCart(c *gin.Context) {
+	userId := c.GetString("userId")
+	cartId := uuid.NewString()
+
+	input, err := services.CreateCart(userId, cartId, "", 1)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to add to cart"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "cart created",
+		"data":    gin.H{"cartId": cartId, "quantity": input.Items.Qty},
+	})
+}
+
+func UpdateCart(c *gin.Context) {
+	userId := c.GetString("userId")
+
+	item, err := services.GetCartById(userId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "cart not found"})
+		return
+	}
+
+	cart, err := services.UpdateCart(userId, item.Items.Qty)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to update cart"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "cart updated",
+		"data":    gin.H{"cartId": cart.Items.CartID, "quantity": item.Items.Qty},
+	})
+}
+
+func DeleteCart(c *gin.Context) {
+	userId := c.GetString("userId")
+	_, err := services.GetCartById(userId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "cart not found"})
+		return
+	}
+
+	if err := services.DeleteCart(userId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete cart"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success delete cart"})
+}
+
+func DeleteCartItem(c *gin.Context) {
+	userId := c.GetString("userId")
+	cart, err := services.GetCartById(userId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "cart not found"})
+		return
+	}
+
+	if err := services.DeleteCartItem(cart.Items.CartID, cart.Items.ProductID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete cart"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success delete item in cart"})
 }
