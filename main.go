@@ -16,7 +16,7 @@ func main() {
 	config.ConnectRedis()
 	config.LoadEnv()
 	config.ConnectDB()
-	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{}, &models.Product{})
+	config.DB.AutoMigrate(&models.Auth{}, &models.Refresh{}, &models.Product{}, &models.Cart{}, &models.CartItem{})
 	r := gin.Default()
 	routes.AuthRoutes(r)
 	routes.ProductRoutes(r)
