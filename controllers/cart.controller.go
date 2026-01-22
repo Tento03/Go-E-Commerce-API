@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func GetCart(c *gin.Context) {
@@ -43,11 +42,4 @@ func GetCartItem(c *gin.Context) {
 		"ProductId": cart.Items.ProductID,
 		"Quantity":  cart.Items.Qty,
 	}})
-}
-
-func CreateCart(c *gin.Context) {
-	userId := c.GetString("userId")
-	cartId := uuid.NewString()
-
-	cart, err := services.CreateCart(userId, cartId)
 }
